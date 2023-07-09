@@ -1,9 +1,9 @@
 const getAllUsers = require("./getAllUsers");
 const addUser = require("./addUser");
-const updateListUsers = require("./updateListUsers");
+const listUsers = require("./listUsers");
 
 module.exports = {
   getAllUsers,
   addUser,
-  updateListUsers,
+  listUsers,
 };
