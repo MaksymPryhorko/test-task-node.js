@@ -3,12 +3,15 @@ const cors = require("cors");
 const usersRouter = require("./routes/api/users");
 const app = express();
 const mongoose = require("mongoose");
-const { DB_HOST } = process.env;
+const dotenv = require("dotenv");
+
+dotenv.config();
+const { DB_HOST, PORT = 3000 } = process.env;
 
 mongoose
   .connect(DB_HOST)
   .then(() => {
-    app.listen(3000, () => {
+    app.listen(PORT, () => {
       console.log("Server running.");
     });
     console.log("Database connection successful");
