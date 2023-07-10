@@ -3,9 +3,7 @@ const cors = require("cors");
 const usersRouter = require("./routes/api/users");
 const app = express();
 const mongoose = require("mongoose");
-
-const DB_HOST =
-  "mongodb+srv://max:NdOVetbczH5WZBSv@cluster0.nrbiemc.mongodb.net/users-collection?retryWrites=true&w=majority";
+const { DB_HOST } = require("./config");
 
 mongoose
   .connect(DB_HOST)
