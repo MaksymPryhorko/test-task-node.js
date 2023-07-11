@@ -1,33 +1,13 @@
 const express = require("express");
-const { HttpError } = require("../../helpers/");
-const users = require("../../models/");
+const { ctrlWrapper } = require("../../helpers/");
+const { getAllUsers, addUser } = require("../../controllers");
 const { validateBody } = require("../../middlewares");
+const { userSchemaJoi } = require("../../models/user");
 
 const router = express.Router();
 
-router.get("/users", async (req, res, next) => {
-  try {
-    const results = await users.getAllUsers();
-    if (!results) {
-      throw HttpError(404, "Not found");
-    }
-    res.json(results);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/users", ctrlWrapper(getAllUsers));
 
-router.post("/addUser", async (req, res, next) => {
-  console.log(req.body);
-  try {
-    const results = await users.addUser(req);
-    if (!results) {
-      throw HttpError(404, "Not found");
-    }
-    res.json(results);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/addUser", validateBody(userSchemaJoi), ctrlWrapper(addUser));
 
 module.exports = router;
