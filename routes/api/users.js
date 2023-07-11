@@ -1,8 +1,7 @@
 const express = require("express");
 const { HttpError } = require("../../helpers/");
 const users = require("../../models/");
-const { validation } = require("../../middlewares");
-const { userSchema } = require("../../schemas");
+const { validateBody } = require("../../middlewares");
 
 const router = express.Router();
 
@@ -10,7 +9,7 @@ router.get("/users", async (req, res, next) => {
   try {
     const results = await users.getAllUsers();
     if (!results) {
-      throw new HttpError(404, "Not found");
+      throw HttpError(404, "Not found");
     }
     res.json(results);
   } catch (error) {
@@ -19,14 +18,11 @@ router.get("/users", async (req, res, next) => {
 });
 
 router.post("/addUser", async (req, res, next) => {
+  console.log(req.body);
   try {
-    const { error } = validation(userSchema);
-    if (error) {
-      throw new HttpError(404, error.message);
-    }
-    const results = await users.addUser(req.body);
+    const results = await users.addUser(req);
     if (!results) {
-      throw new HttpError(404, "Not found");
+      throw HttpError(404, "Not found");
     }
     res.json(results);
   } catch (error) {

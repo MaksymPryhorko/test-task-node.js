@@ -22,7 +22,8 @@ mongoose
   });
 
 app.use(cors());
-app.use("/", usersRouter);
+
+app.use("/api", usersRouter);
 
 app.use((req, res) => res.status(404).json({ message: "Not found" }));
 
