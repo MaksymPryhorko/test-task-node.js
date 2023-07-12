@@ -1,8 +1,7 @@
-const usersOperations = require("../models");
+const { User } = require("../models/user");
 
 const addUser = async (req, res) => {
-  console.log(req.body);
-  const addUser = await usersOperations.addUser(req);
+  const addUser = await User.create(req.body);
   res.status(201).json({
     status: "success",
     code: 201,
