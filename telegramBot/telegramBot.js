@@ -2,10 +2,10 @@ const { Telegraf } = require("telegraf");
 const dotenv = require("dotenv");
 dotenv.config();
 const { BOT_TOKEN } = process.env;
-const { AddUserForBot } = require("../controllers");
+const { addUserForBot } = require("../controllers");
 
 const bot = new Telegraf(BOT_TOKEN);
-console.log("Start Bot");
+console.log("Start Telegram Bot");
 
 const newUser = {
   name: null,
@@ -33,32 +33,33 @@ bot.start((ctx) => {
   ctx.reply(
     `Welcome, ${
       ctx.from.first_name ? ctx.from.first_name : "Unknown"
-    }. Введите имя нового пользователя: /name.`
+    }. Enter new user name with /name command.`
   );
   resetNewUser();
 });
 
 bot.command("name", (ctx) => {
-  ctx.reply("Веддите имя нового пользователя!");
+  ctx.reply("Enter new user name!");
 });
 
 bot.command("age", (ctx) => {
-  ctx.reply("Веддите возраст нового пользователя!");
+  ctx.reply("Enter new user age!");
 });
 
 bot.command("email", (ctx) => {
-  ctx.reply("Веддите email нового пользователя!");
+  ctx.reply("Enter new user email!");
 });
 
 bot.command("sendNewUser", async (ctx) => {
   try {
-    const user = await AddUserForBot(newUser);
+    const user = await addUserForBot(newUser);
     if (!user) {
-      ctx.reply("Ошибка.Что-то пошло не так.");
+      ctx.reply("Error. Something went wrong.");
     }
-    ctx.reply("Новый пользователь успешно отправлен на сервер.");
+    ctx.reply("New user successfully sent to the server.");
+    await resetNewUser();
   } catch (error) {
-    ctx.reply(`Ошибка: 
+    ctx.reply(`Error: 
     ${error.message}`);
   }
 });
@@ -66,7 +67,8 @@ bot.command("sendNewUser", async (ctx) => {
 bot.on("text", async (ctx) => {
   if (newUser.name === null) {
     ctx.reply(
-      `Имя нового пользователя "${ctx.message.text}". Теперь введите возраст нового пользователя /age. Если вы допустили ошибку - начните все заново с команды /start.`
+      `The name of the new user is - "${ctx.message.text}". 
+Now enter the age of the new user through the /age command. If you make a mistake, start over with the /start command.`
     );
     changeDataNewUser("name", ctx.message.text);
     return;
@@ -76,13 +78,12 @@ bot.on("text", async (ctx) => {
     const age = Number.parseInt(ctx.message.text);
     if (age > 0) {
       ctx.reply(
-        `Успешно. Возраст нового пользователя ${age} лет. Теперь введите email нового пользователя /email. Если вы допустили ошибку - начните все заново с команды /start.`
+        `Successfully. The age of the new user is ${age} years. 
+Now enter the new user's email via the /email command. If you make a mistake, start over with the /start command.`
       );
       changeDataNewUser("age", age);
     } else
-      ctx.reply(
-        "Ошибка. Возраст должен быть больше нуля лет. Попробуйте еще раз, через команду /age"
-      );
+      ctx.reply("Error. Age must be greater than zero years. Try again with the /age command.");
     return;
   }
 
@@ -91,17 +92,20 @@ bot.on("text", async (ctx) => {
     if (validateEmail(email)) {
       changeDataNewUser("email", email);
       ctx.reply(
-        `Успешно. Новый пользователь создан. Имя: ${newUser.name}, Возраст: ${newUser.age}, Емейл: ${newUser.email}. Проверьте все денные. Если вы допустили ошибку - начните все заново с команды /start.
-        Нажмите /sendNewUser для отправки нового пользователя на сервер.`
+        `Successfully. New user created. 
+        Name: ${newUser.name}, 
+        Age: ${newUser.age}, 
+        Email: ${newUser.email}. 
+        Check all data. If you make a mistake, start over with the /start command.
+        Click /sendNewUser to send a new user to the server.`
       );
     } else {
-      ctx.reply(`Ошибка. ${email} - введен не корректно. Поробуйте еще раз, через команду /email`);
+      ctx.reply(`Error. ${email} - entered incorrectly. Try again using the /email command.`);
     }
     return;
   }
 });
 
-bot.hears("hi", (ctx) => ctx.reply("Hey there"));
 bot.launch();
 
 // Enable graceful stop
